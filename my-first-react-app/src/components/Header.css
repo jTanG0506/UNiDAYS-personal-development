@@ -29,3 +29,17 @@
   outline: none;
   cursor: pointer;
 }
+
+@media (max-width: 640px) {
+  .Header {
+    padding: 15px 0;
+  }
+
+  .HeaderGroup {
+    grid-template-columns: repeat(4, auto);
+  }
+
+  .Header a:nth-child(4) {
+    display: none;
+  }
+}

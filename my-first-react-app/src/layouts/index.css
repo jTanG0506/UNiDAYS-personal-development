@@ -18,6 +18,7 @@ a {
   background: url('../images/wallpaper3.jpg');
   background-size: cover;
   background-position: center;
+  position: relative;
 }
 
 .HeroGroup {
@@ -78,6 +79,12 @@ a {
   .Hero p {
     font-size: 24px;
   }
+}
+
+.Hero svg {
+  position: absolute;
+  bottom: 0;
+  left: 0;
 }
 
 @keyframes HeroAnimation {

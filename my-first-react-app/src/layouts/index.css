@@ -36,14 +36,17 @@ a {
 
   animation: HeroAnimation;
   animation-duration: 3s;
+  animation-delay: 0.1s;
   animation-fill-mode: forwards;
-  animation-timing-function: cubic-bezier(0.02, 0.8, 0.2, 1);
+  animation-timing-function: cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
 .Hero p {
   color: rgba(255, 255, 255, 0.8);
   font-size: 30px;
   line-height: 1.5;
+  opacity: 0;
+  animation: HeroAnimation 3s 0.2s forwards cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
 .Hero a {

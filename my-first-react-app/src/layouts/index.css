@@ -103,6 +103,10 @@ a {
   .CardGroup {
     grid-template-columns: repeat(2, 1fr);
   }
+
+  .Cards h2 {
+    font-size: 40px;
+  }
 }
 
 @media(max-width: 720px) {

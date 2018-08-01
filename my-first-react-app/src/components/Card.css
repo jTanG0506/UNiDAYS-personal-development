@@ -7,6 +7,16 @@
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.25);
   display: grid;
   grid-template-rows: 1fr 1fr;
+  transition: 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.Card:hover {
+  transform: scale(1.1, 1.1);
+  box-shadow: 0 30px 60px rgba(0, 0, 0, 0.5);
+}
+
+.Card:hover img {
+  transform: translateY(-20px);
 }
 
 .Card img {
@@ -14,6 +24,7 @@
   top: 0;
   height: 110%;
   z-index: -1;
+  transition: 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
 .Card h3 {

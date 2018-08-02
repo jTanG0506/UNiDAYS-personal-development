@@ -3,6 +3,7 @@ import Link from 'gatsby-link'
 import Card from '../components/Card';
 import Section from '../components/Section';
 import Wave from '../components/Wave';
+import staticdata from '../../static-data.json'
 
 const IndexPage = () => (
   <div>

@@ -25,6 +25,12 @@ const Button = styled.button`
   font-weight: 600;
   font-size: 24px;
   justify-self: center;
+  transition: 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
+
+  &:hover {
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+    transform: translateY(-3px);
+  }
 `
 const LinkGroup = styled.div`
   width: 500px;
@@ -32,6 +38,14 @@ const LinkGroup = styled.div`
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   grid-gap: 10px;
+
+  a {
+    transition: 0.8s;
+  }
+
+  a:hover {
+    color: black;
+  }
 `
 
 const Copyright = styled.div`

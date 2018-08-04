@@ -45,11 +45,12 @@ export const query = graphql`
         keywords
       }
     }
-    allContentfulLink {
+    allContentfulLink(sort: { fields: [createdAt], order: ASC }) {
       edges {
         node {
           title
           url
+          createdAt
         }
       }
     }

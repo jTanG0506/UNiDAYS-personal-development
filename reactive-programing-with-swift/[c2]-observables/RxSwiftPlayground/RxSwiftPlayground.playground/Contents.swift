@@ -55,3 +55,17 @@ example(of: "range") {
     })
 }
 
+example(of: "dispose") {
+    let observable = Observable.of("A", "B", "C")
+    let subscription = observable.subscribe { event in
+        print(event)
+    }
+    subscription.dispose()
+}
+
+example(of: "DisposeBag") {
+    let disposeBag = DisposeBag()
+    Observable.of("A", "B", "C").subscribe {
+        print($0)
+    }.disposed(by: disposeBag)
+}

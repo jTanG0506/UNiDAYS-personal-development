@@ -71,7 +71,6 @@ example(of: "DisposeBag") {
 }
 
 example(of: "create") {
-    
     enum MyError: Error {
         case anError
     }
@@ -80,8 +79,6 @@ example(of: "create") {
     
     Observable<String>.create{ observer -> Disposable in
         observer.onNext("1")
-        observer.onError(MyError.anError)
-        observer.onCompleted()
         observer.onNext("?")
         return Disposables.create()
     }.subscribe(
@@ -90,4 +87,22 @@ example(of: "create") {
         onCompleted: { print("Completed") },
         onDisposed: { print("Disposed") }
     ).disposed(by: disposeBag)
+}
+
+example(of: "deferred") {
+    let disposeBag = DisposeBag()
+    var flip = false
+    
+    let factory: Observable<Int> = Observable.deferred {
+        flip = !flip
+        return flip ? Observable.of(1, 2, 3) : Observable.of(4, 5, 6)
+    }
+    
+    for _ in 0...3 {
+        factory.subscribe(onNext: {
+            print($0, terminator: "")
+        }).disposed(by: disposeBag)
+        
+        print()
+    }
 }

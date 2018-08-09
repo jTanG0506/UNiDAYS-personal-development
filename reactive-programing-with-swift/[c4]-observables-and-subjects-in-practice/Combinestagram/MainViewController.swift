@@ -26,6 +26,17 @@ class MainViewController: UIViewController {
             guard let preview = self?.imagePreview else { return }
             preview.image = UIImage.collage(images: photos, size: preview.frame.size)
         }).disposed(by: bag)
+        
+        images.asObservable().subscribe(onNext: { [weak self] photos in
+            self?.updateUI(photos: photos)
+        }).disposed(by: bag)
+    }
+    
+    private func updateUI(photos: [UIImage]) {
+        buttonSave.isEnabled = photos.count > 0 && photos.count % 2 == 0
+        buttonClear.isEnabled = photos.count > 0
+        itemAdd.isEnabled = photos.count < 6
+        title = photos.count > 0 ? "\(photos.count) photos" : "Collage"
     }
     
     @IBAction func actionClear() {

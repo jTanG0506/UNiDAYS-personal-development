@@ -32,3 +32,30 @@ example(of: "PublishSubject") {
         print("S3 -", $0.element ?? $0)
     }.disposed(by: disposeBag)
 }
+
+enum MyError: Error {
+    case anError
+}
+
+func print<T: CustomStringConvertible>(label: String, event: Event<T>) {
+    print(label, event.element ?? event.error ?? event)
+}
+
+
+// BehaviourSubjects always emit the latest element, so you need to provide an initial value.
+// BehaviorSubjects are useful when you want to pre-populate a view with the most recent data.
+example(of: "BehaviourSubject") {
+    let subject = BehaviorSubject(value: "Initial value")
+    let disposeBag = DisposeBag()
+    
+    subject.onNext("X")
+    
+    subject.subscribe {
+        print(label: "1 -", event: $0)
+    }.disposed(by: disposeBag)
+    
+    subject.onError(MyError.anError)
+    subject.subscribe {
+        print(label: "2 -", event: $0)
+    }.disposed(by: disposeBag)
+}

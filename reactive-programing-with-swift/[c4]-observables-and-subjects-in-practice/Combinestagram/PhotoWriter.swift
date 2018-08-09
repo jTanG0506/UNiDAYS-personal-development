@@ -11,7 +11,7 @@ import UIKit
 import Photos
 
 class PhotoWriter {
-  enum Errors: Error {
-    case couldNotSavePhoto
-  }
+    enum Errors: Error {
+        case couldNotSavePhoto
+    }
 }

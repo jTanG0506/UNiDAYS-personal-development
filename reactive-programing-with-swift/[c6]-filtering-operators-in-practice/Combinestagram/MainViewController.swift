@@ -62,7 +62,9 @@ class MainViewController: UIViewController {
         let photosViewController = storyboard!.instantiateViewController(withIdentifier: "PhotosViewController") as! PhotosViewController
         let newPhotos = photosViewController.selectedPhotos.share()
         
-        newPhotos.filter({ newImage in
+        newPhotos.takeWhile({ [weak self] image in
+            return (self?.images.value.count ?? 0) < 6
+        }) .filter({ newImage in
             return newImage.size.width > newImage.size.height
         }).filter({ [weak self] newImage in
             let len = UIImagePNGRepresentation(newImage)?.count ?? 0

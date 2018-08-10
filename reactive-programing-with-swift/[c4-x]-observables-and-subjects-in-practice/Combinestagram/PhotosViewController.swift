@@ -38,7 +38,6 @@ class PhotosViewController: UICollectionViewController {
     // MARK: View Controller
     override func viewDidLoad() {
         super.viewDidLoad()
-        
     }
     
     override func viewWillDisappear(_ animated: Bool) {

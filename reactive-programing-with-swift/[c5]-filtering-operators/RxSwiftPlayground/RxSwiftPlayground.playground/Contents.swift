@@ -108,3 +108,11 @@ example(of: "takeUntil") {
     trigger.onNext("X")
     subject.onNext("3")
 }
+
+example(of: "distinctUntilChanged") {
+    let disposeBag = DisposeBag()
+    
+    Observable.of("A", "A", "B", "B", "A").distinctUntilChanged().subscribe(onNext: {
+        print($0)
+    }).disposed(by: disposeBag)
+}

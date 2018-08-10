@@ -6,7 +6,7 @@ example(of: "ignoreElements") {
     
     strikes.ignoreElements().subscribe { _ in
         print("You're out!")
-    }.disposed(by: disposeBag)
+        }.disposed(by: disposeBag)
     
     strikes.onNext("X")
     strikes.onNext("X")
@@ -26,4 +26,14 @@ example(of: "elementAt") {
     strikes.onNext("X")
     strikes.onNext("X")
     strikes.onNext("X")
+}
+
+example(of: "filter") {
+    let disposeBag = DisposeBag()
+    
+    Observable.of(1, 2, 3, 4, 5, 6).filter { int in
+        int % 2 == 0
+    }.subscribe(onNext: {
+        print($0)
+    }).disposed(by: disposeBag)
 }

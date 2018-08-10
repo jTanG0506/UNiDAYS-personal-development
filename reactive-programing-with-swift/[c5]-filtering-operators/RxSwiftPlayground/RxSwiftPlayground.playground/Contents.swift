@@ -48,3 +48,13 @@ example(of: "skip") {
         print($0)
     }).disposed(by: disposeBag)
 }
+
+example(of: "skipWhile") {
+    let disposeBag = DisposeBag()
+    
+    Observable.of(2, 2, 3, 4, 4).skipWhile{ int in
+        int % 2 == 0
+    }.subscribe(onNext: {
+        print($0)
+    }).disposed(by: disposeBag)
+}

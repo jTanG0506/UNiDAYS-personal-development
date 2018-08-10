@@ -82,3 +82,13 @@ example(of: "take") {
         print($0)
     }).disposed(by: disposeBag)
 }
+
+
+example(of: "takeWhile") {
+    let disposeBag = DisposeBag()
+    Observable.of(2, 4, 4, 4, 6, 6).enumerated().takeWhile { index, int in
+        int % 2 == 0 && index < 3
+    }.map { $0.element }.subscribe(onNext: {
+        print($0)
+    }).disposed(by: disposeBag)
+}

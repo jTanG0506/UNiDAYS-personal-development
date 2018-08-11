@@ -12,6 +12,8 @@ import RxSwift
 
 class PhotosViewController: UICollectionViewController {
     
+    let disposeBag = DisposeBag()
+    
     // MARK: public properties
     
     // MARK: private properties
@@ -38,11 +40,35 @@ class PhotosViewController: UICollectionViewController {
     // MARK: View Controller
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        let authorised = PHPhotoLibrary.authorised.share()
+        
+        authorised.skipWhile { $0 == false }.take(1).subscribe(onNext: { [weak self] _ in
+            self?.photos = PhotosViewController.loadPhotos()
+            DispatchQueue.main.async {
+                self?.collectionView?.reloadData()
+            }
+        }).disposed(by: disposeBag)
+        
+        authorised.skip(1).takeLast(1).filter { $0 == false }.subscribe(onNext: { [weak self] _ in
+            guard let errorMessage = self?.errorMessage else { return }
+            DispatchQueue.main.async(execute: errorMessage)
+        }).disposed(by: disposeBag)
     }
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         selectedPhotoSubject.onCompleted()
+    }
+    
+    
+    private func errorMessage() {
+        let title = "No access to Camera Roll"
+        let desc = "You can grant access to Combinestagram from the Settings app"
+        alert(title: title, description: desc).subscribe(onCompleted: { [weak self] in
+            self?.dismiss(animated: true, completion: nil)
+            _ = self?.navigationController?.popViewController(animated: true)
+        }).disposed(by: disposeBag)
     }
     
     // MARK: UICollectionView
@@ -80,5 +106,25 @@ class PhotosViewController: UICollectionViewController {
                 self?.selectedPhotoSubject.onNext(image)
             }
         })
+    }
+}
+
+extension PHPhotoLibrary {
+    static var authorised: Observable<Bool> {
+        return Observable.create { observer in
+            DispatchQueue.main.async {
+                if authorizationStatus() == .authorized {
+                    observer.onNext(true)
+                    observer.onCompleted()
+                } else {
+                    observer.onNext(false)
+                    requestAuthorization { newStatus in
+                        observer.onNext(newStatus == .authorized)
+                        observer.onCompleted()
+                    }
+                }
+            }
+            return Disposables.create()
+        }
     }
 }

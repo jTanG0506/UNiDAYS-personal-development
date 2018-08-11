@@ -15,6 +15,9 @@ class PhotosViewController: UICollectionViewController {
     let disposeBag = DisposeBag()
     
     // MARK: public properties
+    var selectedPhotos: Observable<UIImage> {
+        return selectedPhotoSubject.asObservable()
+    }
     
     // MARK: private properties
     private lazy var photos = PhotosViewController.loadPhotos()
@@ -27,9 +30,6 @@ class PhotosViewController: UICollectionViewController {
     }()
     
     private let selectedPhotoSubject = PublishSubject<UIImage>()
-    var selectedPhotos: Observable<UIImage> {
-        return selectedPhotoSubject.asObservable()
-    }
     
     static func loadPhotos() -> PHFetchResult<PHAsset> {
         let allPhotosOptions = PHFetchOptions()

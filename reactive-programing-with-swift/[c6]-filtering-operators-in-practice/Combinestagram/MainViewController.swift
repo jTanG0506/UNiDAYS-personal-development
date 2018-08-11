@@ -24,26 +24,31 @@ class MainViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        images.asObservable().throttle(0.5, scheduler: MainScheduler.instance).subscribe(onNext: { [weak self] photos in
+        let imageObservable = images.asObservable().share()
+        
+        imageObservable.throttle(0.5, scheduler: MainScheduler.instance).subscribe(onNext: { [weak self] photos in
             guard let preview = self?.imagePreview else { return }
             preview.image = UIImage.collage(images: photos, size: preview.frame.size)
         }).disposed(by: bag)
         
-        images.asObservable().subscribe(onNext: { [weak self] photos in
+        imageObservable.subscribe(onNext: { [weak self] photos in
             self?.updateUI(photos: photos)
         }).disposed(by: bag)
+        
+        updateUI(photos: images.value)
     }
     
     private func updateUI(photos: [UIImage]) {
         buttonSave.isEnabled = photos.count > 0 && photos.count % 2 == 0
         buttonClear.isEnabled = photos.count > 0
         itemAdd.isEnabled = photos.count < 6
-        title = photos.count > 0 ? "\(photos.count) photos" : "Collage"
+        title = photos.count > 0 ? "\(photos.count) \(photos.count == 1 ? "photo" : "photos")" : "Collage"
     }
     
     @IBAction func actionClear() {
         images.value = []
         imageCache = []
+        navigationItem.leftBarButtonItem = nil
     }
     
     @IBAction func actionSave() {

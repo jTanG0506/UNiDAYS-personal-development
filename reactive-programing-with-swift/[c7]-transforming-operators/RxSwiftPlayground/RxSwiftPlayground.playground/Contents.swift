@@ -72,3 +72,34 @@ example(of: "flatMapLatest") {
     ryan.score.onNext(95)
     charlotte.score.onNext(100)
 }
+
+example(of: "materialize and dematerialize") {
+    enum MyError: Error {
+        case anError
+    }
+    
+    let disposeBag = DisposeBag()
+    
+    let ryan = Student(score: BehaviorSubject(value: 80))
+    let charlotte = Student(score: BehaviorSubject(value: 100))
+    
+    let student = BehaviorSubject(value: ryan)
+    
+    let studentScore = student.flatMapLatest { $0.score.materialize() }
+    studentScore.filter {
+        guard $0.error == nil else {
+            print($0.error!)
+            return false
+        }
+        
+        return true
+    }.dematerialize().subscribe(onNext: {
+        print($0)
+    }).disposed(by: disposeBag)
+    
+    ryan.score.onNext(85)
+    ryan.score.onError(MyError.anError)
+    ryan.score.onNext(90)
+    
+    student.onNext(charlotte)
+}

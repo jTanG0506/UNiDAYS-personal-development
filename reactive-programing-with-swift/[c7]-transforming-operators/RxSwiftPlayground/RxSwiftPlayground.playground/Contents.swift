@@ -52,3 +52,23 @@ example(of: "flatMap") {
     ryan.score.onNext(95)
     charlotte.score.onNext(100)
 }
+
+example(of: "flatMapLatest") {
+    let disposeBag = DisposeBag()
+    
+    let ryan = Student(score: BehaviorSubject(value: 80))
+    let charlotte = Student(score: BehaviorSubject(value: 90))
+    
+    let student = PublishSubject<Student>()
+    
+    student.flatMapLatest { $0.score }.subscribe(onNext: {
+        print($0)
+    }).disposed(by: disposeBag)
+    
+    student.onNext(ryan)
+    ryan.score.onNext(85)
+    student.onNext(charlotte)
+    // The line below will have no effect as we have switched to 'charlotte'.
+    ryan.score.onNext(95)
+    charlotte.score.onNext(100)
+}

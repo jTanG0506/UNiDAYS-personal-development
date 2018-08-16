@@ -17,7 +17,7 @@ class Event {
     let action: String
     
     // MARK: - JSON -> Event
-    init(dictionary: AnyDict) {
+    init?(dictionary: AnyDict) {
         guard let repoDict = dictionary["repo"] as? AnyDict,
             let actor = dictionary["actor"] as? AnyDict,
             let repoName = repoDict["name"] as? String,
@@ -26,7 +26,7 @@ class Event {
             let actorUrl  = URL(string: actorUrlString),
             let actionType = dictionary["type"] as? String
             else {
-                fatalError()
+                return nil
         }
         
         repo = repoName

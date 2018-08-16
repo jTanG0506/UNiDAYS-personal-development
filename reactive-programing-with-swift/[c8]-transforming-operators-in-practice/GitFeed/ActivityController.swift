@@ -63,9 +63,9 @@ class ActivityController: UITableViewController {
         }.filter { objects in
             return objects.count > 0
         }.map { objects in
-            return objects.map(Event.init)
+            return objects.flatMap(Event.init)
         }.subscribe(onNext: { [weak self] newEvents in
-        self?.processEvents(newEvents)
+            self?.processEvents(newEvents)
         }).disposed(by: bag)
     }
     

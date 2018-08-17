@@ -35,3 +35,19 @@ example(of: "concat") {
         print($0)
     }).disposed(by: bag)
 }
+
+example(of: "concatMap") {
+    let bag = DisposeBag()
+    
+    let sequences = [
+        "Germany": Observable.of("Berlin", "Münich", "Frankfurt"),
+        "Spain": Observable.of("Madrid", "Barcelona", "Valencia")
+    ]
+    
+    let observable = Observable.of("Germany", "Spain")
+        .concatMap { country in sequences[country] ?? .empty() }
+    
+    observable.subscribe(onNext: {
+        print($0)
+    }).disposed(by: bag)
+}

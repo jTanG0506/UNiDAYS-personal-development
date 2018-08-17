@@ -23,3 +23,15 @@ example(of: "Observable.concat") {
         print($0)
     }).disposed(by: bag)
 }
+
+example(of: "concat") {
+    let bag = DisposeBag()
+    
+    let germanCities = Observable.of("Berlin", "Münich", "Frankfurt")
+    let spanishCities = Observable.of("Madrid", "Barcelona", "Valencia")
+    
+    let observable = germanCities.concat(spanishCities)
+    observable.subscribe(onNext: {
+        print($0)
+    }).disposed(by: bag)
+}

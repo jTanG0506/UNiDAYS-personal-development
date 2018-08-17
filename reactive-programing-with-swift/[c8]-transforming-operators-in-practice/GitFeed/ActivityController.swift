@@ -54,7 +54,20 @@ class ActivityController: UITableViewController {
     }
     
     func fetchEvents(repo: String) {
-        let response = Observable.from([repo])
+        let response = Observable.from(["https://api.github.com/search/repositories?q=language:swift&per_page=5"])
+            .map { urlString -> URL in
+                return URL(string: urlString)!
+            }
+            .flatMap { url -> Observable<Any> in
+                let request = URLRequest(url: url)
+                return URLSession.shared.rx.json(request: request)
+            }
+            .flatMap { response -> Observable<String> in
+                guard let response = response as? [String: Any], let items = response["items"] as? [[String: Any]] else {
+                    return Observable.empty()
+                }
+                return Observable.from(items.map { $0["full_name"] as! String })
+            }
             .map { urlString -> URL in
                 return URL(string: "https://api.github.com/repos/\(urlString)/events")!
             }
@@ -67,36 +80,47 @@ class ActivityController: UITableViewController {
             }
             .flatMap { request -> Observable<(response: HTTPURLResponse, data: Data)> in
                 return URLSession.shared.rx.response(request: request)
-            }.share(replay: 1, scope: .whileConnected)
-        
-        response.filter { response, _ in
-            return 200..<300 ~= response.statusCode
-        }.map { _, data -> [[String: Any]] in
-            guard let jsonObject = try? JSONSerialization.jsonObject(with: data, options: []),
-                let result = jsonObject as? [[String: Any]] else {
-                    return []
             }
-            return result
-        }.filter { objects in
-            return objects.count > 0
-        }.map { objects in
-            return objects.compactMap(Event.init)
-        }.subscribe(onNext: { [weak self] newEvents in
-            self?.processEvents(newEvents)
-        }).disposed(by: bag)
+            .share(replay: 1, scope: .whileConnected)
         
-        response.filter { response, _ in
-            return 200..<300 ~= response.statusCode
-        }.flatMap { response, _ -> Observable<NSString> in
-            guard let value = response.allHeaderFields["Last-Modified"] as? NSString else {
-                return Observable.empty()
+        response
+            .filter { response, _ in
+                return 200..<300 ~= response.statusCode
             }
-            return Observable.just(value)
-        }.subscribe(onNext: { [weak self] modifiedHeader in
-            guard let strongSelf = self else { return }
-            strongSelf.lastModified.value = modifiedHeader
-            try? modifiedHeader.write(to: strongSelf.modifiedFileURL, atomically: true, encoding: String.Encoding.utf8.rawValue)
-        }).disposed(by: bag)
+            .map { _, data -> [[String: Any]] in
+                guard let jsonObject = try? JSONSerialization.jsonObject(with: data, options: []),
+                    let result = jsonObject as? [[String: Any]] else {
+                        return []
+                }
+                return result
+            }
+            .filter { objects in
+                return objects.count > 0
+            }
+            .map { objects in
+                return objects.compactMap(Event.init)
+            }
+            .subscribe(onNext: { [weak self] newEvents in
+                self?.processEvents(newEvents)
+            })
+            .disposed(by: bag)
+        
+        response
+            .filter { response, _ in
+                return 200..<300 ~= response.statusCode
+            }
+            .flatMap { response, _ -> Observable<NSString> in
+                guard let value = response.allHeaderFields["Last-Modified"] as? NSString else {
+                    return Observable.empty()
+                }
+                return Observable.just(value)
+            }
+            .subscribe(onNext: { [weak self] modifiedHeader in
+                guard let strongSelf = self else { return }
+                strongSelf.lastModified.value = modifiedHeader
+                try? modifiedHeader.write(to: strongSelf.modifiedFileURL, atomically: true, encoding: String.Encoding.utf8.rawValue)
+            })
+            .disposed(by: bag)
     }
     
     func processEvents(_ newEvents: [Event]) {
@@ -131,4 +155,5 @@ class ActivityController: UITableViewController {
         return cell
     }
 }
+
 

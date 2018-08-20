@@ -171,3 +171,21 @@ example(of: "sample") {
     textField.onNext("Paris")
     button.onNext(())
 }
+
+example(of: "amb") {
+    let left = PublishSubject<String>()
+    let right = PublishSubject<String>()
+    
+    let observable = left.amb(right)
+    let disposable = observable.subscribe(onNext: {
+        print($0)
+    })
+    
+    left.onNext("Lisbon")
+    right.onNext("Copenhagen")
+    left.onNext("London")
+    left.onNext("Madrid")
+    right.onNext("Vienna")
+    
+    disposable.dispose()
+}

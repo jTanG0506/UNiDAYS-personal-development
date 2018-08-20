@@ -51,3 +51,30 @@ example(of: "concatMap") {
         print($0)
     }).disposed(by: bag)
 }
+
+example(of: "merge") {
+    let left = PublishSubject<String>()
+    let right = PublishSubject<String>()
+    
+    let source = Observable.of(left.asObservable(), right.asObservable())
+    
+    let observable = source.merge()
+    let disposable = observable.subscribe(onNext: {
+        print($0)
+    })
+    
+    var leftValues = ["Berlin", "Munich", "Frankfurt"]
+    var rightValues = ["Madrid", "Barcelona", "Valencia"]
+    
+    repeat {
+        if arc4random_uniform(2) == 0 {
+            if !leftValues.isEmpty {
+                left.onNext("Left: " + leftValues.removeFirst())
+            }
+        } else if !rightValues.isEmpty {
+            right.onNext("Right: " + rightValues.removeFirst())
+        }
+    } while !leftValues.isEmpty || !rightValues.isEmpty
+    
+    disposable.dispose()
+}

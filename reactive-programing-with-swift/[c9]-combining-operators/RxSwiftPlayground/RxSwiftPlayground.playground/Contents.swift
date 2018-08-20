@@ -83,7 +83,9 @@ example(of: "combineLatest") {
     let left = PublishSubject<String>()
     let right = PublishSubject<String>()
     
-    let observable = Observable.combineLatest(left, right) { ($0, $1) }.filter { !$0.0.isEmpty }
+    let observable = Observable.combineLatest([left, right]) {
+        strings in strings.joined(separator: " ")
+    }
     
     let disposable = observable.subscribe(onNext: {
         print($0)
@@ -97,9 +99,13 @@ example(of: "combineLatest") {
     right.onNext("RxSwift")
     print("> Sending another value to Left")
     left.onNext("Have a good day,")
+    
+    disposable.dispose()
 }
 
 example(of: "combine user choice and value") {
+    let bag = DisposeBag()
+    
     let choice: Observable<DateFormatter.Style> = Observable.of(.short, .long)
     let dates = Observable.of(Date())
     
@@ -111,5 +117,5 @@ example(of: "combine user choice and value") {
     
     observable.subscribe(onNext: {
         print($0)
-    })
+    }).disposed(by: bag)
 }

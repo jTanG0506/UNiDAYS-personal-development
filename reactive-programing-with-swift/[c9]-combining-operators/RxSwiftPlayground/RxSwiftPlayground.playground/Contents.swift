@@ -139,3 +139,19 @@ example(of: "zip") {
         print($0)
     }).disposed(by: bag)
 }
+
+example(of: "withLatestFrom") {
+    let button = PublishSubject<Void>()
+    let textField = PublishSubject<String>()
+    
+    let observable = button.withLatestFrom(textField)
+    _ = observable.subscribe(onNext: {
+        print($0)
+    })
+    
+    textField.onNext("Par")
+    textField.onNext("Pari")
+    textField.onNext("Paris")
+    button.onNext(())
+    button.onNext(())
+}

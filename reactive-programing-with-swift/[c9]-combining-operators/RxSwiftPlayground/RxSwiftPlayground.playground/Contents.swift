@@ -119,3 +119,23 @@ example(of: "combine user choice and value") {
         print($0)
     }).disposed(by: bag)
 }
+
+example(of: "zip") {
+    let bag = DisposeBag()
+    
+    enum Weather {
+        case cloudy
+        case sunny
+    }
+    
+    let left: Observable<Weather> = Observable.of(.sunny, .cloudy, .cloudy, .sunny)
+    let right = Observable.of("Lisbon", "Copenhagen", "London", "Madrid", "Vienna")
+    
+    let observable = Observable.zip(left, right) { weather, city in
+        return "It's \(weather) in \(city)"
+    }
+    
+    observable.subscribe(onNext: {
+        print($0)
+    }).disposed(by: bag)
+}

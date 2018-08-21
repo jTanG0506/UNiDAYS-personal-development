@@ -26,9 +26,9 @@ class EONET {
         return EONET.request(endpoint: categoriesEndpoint).map { data in
             let categories = data["categories"] as? [[String: Any]] ?? []
             return categories.compactMap(EOCategory.init).sorted { $0.name < $1.name }
-        }
-        .catchErrorJustReturn([])
-        .share(replay: 1, scope: .forever)
+            }
+            .catchErrorJustReturn([])
+            .share(replay: 1, scope: .forever)
     }()
     
     static func filteredEvents(events: [EOEvent], forCategory category: EOCategory) -> [EOEvent] {
@@ -40,12 +40,26 @@ class EONET {
             }
             .sorted(by: EOEvent.compareDates)
     }
-
+    
+    fileprivate static func events(forLast days: Int, closed: Bool) -> Observable<[EOEvent]> {
+        return request(endpoint: eventsEndpoint, query: [
+            "days": NSNumber(value: days),
+            "status": (closed ? "closed" : "open")
+            ])
+            .map { json in
+                guard let raw = json["events"] as? [[String: Any]] else {
+                    throw EOError.invalidJSON(eventsEndpoint)
+                }
+                return raw.compactMap(EOEvent.init)
+            }
+            .catchErrorJustReturn([])
+    }
+    
     static func request(endpoint: String, query: [String: Any] = [:]) -> Observable<[String: Any]> {
         do {
             guard let url = URL(string: API)?.appendingPathComponent(endpoint),
                 var components = URLComponents(url: url, resolvingAgainstBaseURL: true) else {
-                throw EOError.invalidURL(endpoint)
+                    throw EOError.invalidURL(endpoint)
             }
             
             components.queryItems = try query.compactMap { (key, value) in
@@ -64,7 +78,7 @@ class EONET {
             return URLSession.shared.rx.response(request: request).map { _, data -> [String: Any] in
                 guard let jsonObject = try? JSONSerialization.jsonObject(with: data, options: []),
                     let result = jsonObject as? [String: Any] else {
-                    throw EOError.invalidJSON(finalURL.absoluteString)
+                        throw EOError.invalidJSON(finalURL.absoluteString)
                 }
                 return result
             }

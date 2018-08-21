@@ -242,3 +242,17 @@ example(of: "scan") {
         print($0)
     }).disposed(by: bag)
 }
+
+example(of: "Challenge 1") {
+    let bag = DisposeBag()
+    let source = Observable.of(1, 3, 5, 7, 9)
+    
+    let scanner = source.scan(0, accumulator: +)
+    
+    let observable = Observable.zip(source, scanner) { value, total in
+        return "Current: \(value) Total: \(total)"
+    }
+    observable.subscribe(onNext: {
+        print($0)
+    }).disposed(by: bag)
+}

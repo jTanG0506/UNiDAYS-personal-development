@@ -23,28 +23,32 @@ class EONET {
     }()
     
     static var categories: Observable<[EOCategory]> = {
-        return EONET.request(endpoint: categoriesEndpoint).map { data in
-            let categories = data["categories"] as? [[String: Any]] ?? []
-            return categories.compactMap(EOCategory.init).sorted { $0.name < $1.name }
+        return EONET.request(endpoint: categoriesEndpoint)
+            .map { json in
+                guard let raw = json["events"] as? [[String: Any]] else {
+                    throw EOError.invalidJSON(categoriesEndpoint)
+                }
+                return raw.compactMap(EOCategory.init).sorted { $0.name < $1.name }
             }
             .catchErrorJustReturn([])
             .share(replay: 1, scope: .forever)
     }()
     
     static func filteredEvents(events: [EOEvent], forCategory category: EOCategory) -> [EOEvent] {
-        return events.filter { event in
-            return event.categories.contains(category.id) &&
-                !category.events.contains {
+        return events
+            .filter { event in
+                return event.categories.contains(category.id) && !category.events.contains {
                     $0.id == event.id
-            }
+                }
             }
             .sorted(by: EOEvent.compareDates)
     }
     
     fileprivate static func events(forLast days: Int, closed: Bool) -> Observable<[EOEvent]> {
-        return request(endpoint: eventsEndpoint, query: [
-            "days": NSNumber(value: days),
-            "status": (closed ? "closed" : "open")
+        return request(endpoint: eventsEndpoint, query:
+            [
+                "days": NSNumber(value: days),
+                "status": (closed ? "closed" : "open")
             ])
             .map { json in
                 guard let raw = json["events"] as? [[String: Any]] else {

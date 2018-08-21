@@ -42,7 +42,7 @@ struct EOLocation {
             date = nil
         }
         type = geoType
-        coordinates = stride(from: 0, to: coords.count, by: 2).flatMap { index in
+        coordinates = stride(from: 0, to: coords.count, by: 2).compactMap { index in
             guard let lat = coords[index] as? Double,
                 let long = coords[index + 1] as? Double else {
                     return nil

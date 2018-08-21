@@ -31,14 +31,14 @@ struct EOEvent {
         self.description = description
         self.link = URL(string: link)
         self.closeDate = EONET.ISODateReader.date(from: closeDate)
-        self.categories = categories.flatMap { categoryDesc in
+        self.categories = categories.compactMap { categoryDesc in
             guard let catID = categoryDesc["id"] as? Int else {
                 return nil
             }
             return catID
         }
         if let geometries = json["geometries"] as? [[String: Any]] {
-            locations = geometries.flatMap(EOLocation.init)
+            locations = geometries.compactMap(EOLocation.init)
         } else {
             locations = []
         }

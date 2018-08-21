@@ -28,7 +28,7 @@ struct EOCategory: Equatable {
     }
     
     // MARK: - Equatable
-    static func ==(lhs: EOCategory, rhs: EOCategory) -> Bool {
+    static func == (lhs: EOCategory, rhs: EOCategory) -> Bool {
         return lhs.id == rhs.id
     }
 }

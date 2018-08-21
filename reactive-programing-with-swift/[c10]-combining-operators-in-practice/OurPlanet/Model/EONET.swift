@@ -31,6 +31,37 @@ class EONET {
             }
             .sorted(by: EOEvent.compareDates)
     }
+
+    static func request(endpoint: String, query: [String: Any] = [:]) -> Observable<[String: Any]> {
+        do {
+            guard let url = URL(string: API)?.appendingPathComponent(endpoint),
+                var components = URLComponents(url: url, resolvingAgainstBaseURL: true) else {
+                throw EOError.invalidURL(endpoint)
+            }
+            
+            components.queryItems = try query.compactMap { (key, value) in
+                guard let v = value as? CustomStringConvertible else {
+                    throw EOError.invalidParameter(key, value)
+                }
+                return URLQueryItem(name: key, value: v.description)
+            }
+            
+            guard let finalURL = components.url else {
+                throw EOError.invalidURL(endpoint)
+            }
+            
+            let request = URLRequest(url: finalURL)
+            
+            return URLSession.shared.rx.response(request: request).map { _, data -> [String: Any] in
+                guard let jsonObject = try? JSONSerialization.jsonObject(with: data, options: []),
+                    let result = jsonObject as? [String: Any] else {
+                    throw EOError.invalidJSON(finalURL.absoluteString)
+                }
+                return result
+            }
+        } catch {
+            return Observable.empty()
+        }
+    }
     
 }
-

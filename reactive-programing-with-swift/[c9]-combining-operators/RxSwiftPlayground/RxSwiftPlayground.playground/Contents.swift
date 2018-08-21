@@ -220,3 +220,15 @@ example(of: "switchLatest") {
     
     disposable.dispose()
 }
+
+example(of: "reduce") {
+    let bag = DisposeBag()
+    let source = Observable.of(1, 3, 5, 7, 9)
+    
+    let observable = source.reduce(0, accumulator: { summary, newValue in
+        return summary + newValue
+    })
+    observable.subscribe(onNext: {
+        print($0)
+    }).disposed(by: bag)
+}

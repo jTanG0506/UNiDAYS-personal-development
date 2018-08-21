@@ -22,6 +22,15 @@ class EONET {
         return formatter
     }()
     
+    static var categories: Observable<[EOCategory]> = {
+        return EONET.request(endpoint: categoriesEndpoint).map { data in
+            let categories = data["categories"] as? [[String: Any]] ?? []
+            return categories.compactMap(EOCategory.init).sorted { $0.name < $1.name }
+        }
+        .catchErrorJustReturn([])
+        .share(replay: 1, scope: .forever)
+    }()
+    
     static func filteredEvents(events: [EOEvent], forCategory category: EOCategory) -> [EOEvent] {
         return events.filter { event in
             return event.categories.contains(category.id) &&

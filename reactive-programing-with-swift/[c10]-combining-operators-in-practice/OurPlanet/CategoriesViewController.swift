@@ -14,23 +14,38 @@ class CategoriesViewController: UIViewController, UITableViewDataSource, UITable
     
     @IBOutlet var tableView: UITableView!
     
+    let categories = Variable<[EOCategory]>([])
+    let disposeBag = DisposeBag()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        categories.asObservable().subscribe(onNext: { [weak self] _ in
+            DispatchQueue.main.async {
+                self?.tableView.reloadData()
+            }
+        }).disposed(by: disposeBag)
         
         startDownload()
     }
     
     func startDownload() {
-        
+        let eoCategories = EONET.categories
+        eoCategories.bind(to: categories).disposed(by: disposeBag)
     }
     
     // MARK: UITableViewDataSource
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 0
+        return categories.value.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "categoryCell")!
+        
+        let category = categories.value[indexPath.row]
+        cell.textLabel?.text = category.name
+        cell.detailTextLabel?.text = category.description
+        
         return cell
     }
     

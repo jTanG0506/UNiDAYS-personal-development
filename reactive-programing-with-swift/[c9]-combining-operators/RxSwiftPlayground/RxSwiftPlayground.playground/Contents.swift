@@ -256,3 +256,15 @@ example(of: "Challenge 1") {
         print($0)
     }).disposed(by: bag)
 }
+
+example(of: "Challenge 1 - Alternate") {
+    let bag = DisposeBag()
+    let source = Observable.of(1, 3, 5, 7, 9)
+    
+    let observable = source.scan((0, 0), accumulator: { total, value in
+        return (value, value + total.1)
+    })
+    observable.subscribe(onNext: {
+        print("Current: \($0.0) Total: \($0.1)")
+    }).disposed(by: bag)
+}

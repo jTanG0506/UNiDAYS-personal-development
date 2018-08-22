@@ -25,7 +25,7 @@ class EONET {
     static var categories: Observable<[EOCategory]> = {
         return EONET.request(endpoint: categoriesEndpoint)
             .map { json in
-                guard let raw = json["events"] as? [[String: Any]] else {
+                guard let raw = json["categories"] as? [[String: Any]] else {
                     throw EOError.invalidJSON(categoriesEndpoint)
                 }
                 return raw.compactMap(EOCategory.init).sorted { $0.name < $1.name }

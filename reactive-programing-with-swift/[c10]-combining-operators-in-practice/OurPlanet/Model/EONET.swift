@@ -38,7 +38,11 @@ class EONET {
         let openEvents = events(forLast: days, closed: false)
         let closedEvents = events(forLast: days, closed: true)
         
-        return openEvents.concat(closedEvents)
+        return Observable.of(openEvents, closedEvents)
+            .merge()
+            .reduce([]) { running, new in
+                running + new
+            }
     }
     
     static func filteredEvents(events: [EOEvent], forCategory category: EOCategory) -> [EOEvent] {

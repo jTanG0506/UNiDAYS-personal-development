@@ -13,12 +13,18 @@ import RxCocoa
 class CategoriesViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
     
     @IBOutlet var tableView: UITableView!
+    var activityIndicator: UIActivityIndicatorView!
     
     let categories = Variable<[EOCategory]>([])
     let disposeBag = DisposeBag()
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        activityIndicator = UIActivityIndicatorView()
+        activityIndicator.color = .black
+        navigationItem.rightBarButtonItem = UIBarButtonItem(customView: activityIndicator)
+        activityIndicator.startAnimating()
         
         categories.asObservable().subscribe(onNext: { [weak self] _ in
             DispatchQueue.main.async {
@@ -35,9 +41,9 @@ class CategoriesViewController: UIViewController, UITableViewDataSource, UITable
             return Observable.from(categories.map { category in
                 EONET.events(forLast: 360, category: category)
             })
-        }
-        .merge(maxConcurrent: 2)
-
+            }
+            .merge(maxConcurrent: 2)
+        
         let updatedCategories = eoCategories.flatMap { categories in
             downloadedEvents.scan(categories) { updated, events in
                 return updated.map { category in
@@ -51,7 +57,12 @@ class CategoriesViewController: UIViewController, UITableViewDataSource, UITable
                 }
             }
         }
-        
+        .do(onCompleted: { [weak self] in
+            DispatchQueue.main.async {
+                self?.activityIndicator.stopAnimating()
+            }
+        })
+                
         eoCategories.concat(updatedCategories).bind(to: categories).disposed(by: disposeBag)
     }
     
@@ -82,5 +93,6 @@ class CategoriesViewController: UIViewController, UITableViewDataSource, UITable
     }
     
 }
+
 
 

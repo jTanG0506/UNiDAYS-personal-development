@@ -34,6 +34,13 @@ class EONET {
             .share(replay: 1, scope: .forever)
     }()
     
+    static func event(forLast days: Int = 360) -> Observable<[EOEvent]> {
+        let openEvents = events(forLast: days, closed: false)
+        let closedEvents = events(forLast: days, closed: true)
+        
+        return openEvents.concat(closedEvents)
+    }
+    
     static func filteredEvents(events: [EOEvent], forCategory category: EOCategory) -> [EOEvent] {
         return events
             .filter { event in

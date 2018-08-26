@@ -7,9 +7,16 @@ provider:
     - Effect: Allow
       Action:
         - dynamodb:PutItem
+        - dynamodb:GetItem
       Resource: "arn:aws:dynamodb:us-east-1:987514701793:table/todos"
 
 functions:
+  getTodo:
+    handler: get.run
+    events:
+      - http:
+          path: todos/{id}
+          method: get
   createTodo:
     handler: create.run
     events:

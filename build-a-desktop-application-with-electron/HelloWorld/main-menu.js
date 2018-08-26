@@ -1,5 +1,5 @@
 const { app, Menu, BrowserWindow } = require('electron');
-const { showMessage, showSaveDialog } = require('./dialogs');
+const { showMessage, showSaveDialog, showOpenDialog } = require('./dialogs');
 const isWindows = process.platform === 'win32';
 
 module.exports = {
@@ -33,7 +33,7 @@ function setMainMenu(mainWindow) {
         {
           label: 'Open File',
           click() {
-
+            showOpenDialog(mainWindow);
           }
         },
         { type: 'separator' },

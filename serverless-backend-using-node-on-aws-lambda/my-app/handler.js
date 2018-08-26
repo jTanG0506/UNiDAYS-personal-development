@@ -1,4 +1,9 @@
-module.exports.run = (event, context, callback) => {
-  console.log("I am a debug statement :)");
-  callback(null, "Hello World");
+module.exports.run = (event) => {
+  return Promise.resolve("Hello");
 }
+
+// sls deploy
+// sls deploy --function helloWorld
+// sls invoke --function helloWorld
+// sls invoke --function helloWorld --log
+// sls logs --function helloWorld

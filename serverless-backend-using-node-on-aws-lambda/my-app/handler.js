@@ -1,5 +1,10 @@
 module.exports.run = async (event) => {
-  return "Hello again";
+  return {
+    statusCode: 200,
+    body: JSON.stringify({
+      message: "Hello World"
+    })
+  }
 }
 
 // sls deploy

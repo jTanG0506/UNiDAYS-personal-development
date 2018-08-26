@@ -1,0 +1,27 @@
+const AWS = require("aws-sdk");
+const uuid = require("uuid/v4");
+
+const client = new AWS.DynamoDB.DocumentClient();
+
+module.exports.run = async (event) => {
+  const data = JSON.parse(event.body);
+
+  const params = {
+    TableName: "todos",
+    Item: {
+      id: uuid(),
+      text: data.text,
+      checked: false
+    }
+  };
+
+  await client.put(params).promise();
+
+  return {
+    statusCode: 200,
+    body: JSON.stringify(data)
+  }
+}
+
+// npm install --save uuid
+// curl -X POST [ENDPOINT] --data '[JSON]'

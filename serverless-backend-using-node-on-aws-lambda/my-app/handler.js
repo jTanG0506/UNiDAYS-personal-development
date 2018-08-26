@@ -1,5 +1,5 @@
-module.exports.run = (event) => {
-  return Promise.resolve("Hello");
+module.exports.run = async (event) => {
+  return "Hello again";
 }
 
 // sls deploy

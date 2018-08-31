@@ -10,6 +10,12 @@
 	<script defer src="https://use.fontawesome.com/releases/v5.0.7/js/all.js"></script>
 	<!-- <link rel="stylesheet" href="styles/debug.css"> -->
 	<style>
+		.center {
+			display: flex;
+			justify-content: center;
+			align-items: center;
+		}
+
 		.grid {
 			display: grid;
 			grid-template-columns: [xl-start] 1fr 1.5rem [md-start] minmax(0, 624px) [md-end] 1.5rem 1fr [xl-end];
@@ -33,7 +39,7 @@
 <body>
 	<section class="section is-paddingless-horizontal">
 		<div class="container grid">
-			<nav class="breadcrumb grid-xl" aria-label="breadcrumbs">
+			<nav class="breadcrumb" aria-label="breadcrumbs">
 				<ul>
 					<li>
 						<a href="#">Home</a>
@@ -43,6 +49,36 @@
 					</li>
 				</ul>
 			</nav>
+		</div>
+	</section>
+
+	<section class="section is-paddingless-horizontal" style="padding-top:0;">
+		<div class="container grid">
+			<article class="media center">
+				<figure class="media-left">
+					<figure class="image is-64x64">
+						<img style="border-radius: 50%;" src="images/me.jpg">
+					</figure>
+				</figure>
+				<div class="media-content">
+					<div class="content">
+						<p>
+							<strong>Jonathan Tang</strong>
+							<a>@jTanG0506</a>
+							<br>
+							<span class="has-text-grey">Self-taught, inspired to learn
+								<br>
+								<time datetime="2018-08-31">Aug 31</time> · 20 min read
+							</span>
+						</p>
+					</div>
+				</div>
+			</article>
+
+			<div class="section is-paddingless-horizontal">
+				<h1 class="title is-2">How to build a beautiful blog</h1>
+				<h2 class="subtitle is-3 has-text-grey-light">Learn from first-principles</h2>
+			</div>
 		</div>
 	</section>
 </body>

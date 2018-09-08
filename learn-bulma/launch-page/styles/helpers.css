@@ -17,6 +17,14 @@
     line-height: 1;
 }
 
+.black-with-white-hover {
+  color: black;
+}
+
+.black-with-white-hover:hover {
+  color: white;
+}
+
 @media (max-width: 1024px) {
 	.desktop {
 		display: none;
